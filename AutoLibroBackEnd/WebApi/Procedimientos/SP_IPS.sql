@@ -1,0 +1,89 @@
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'[dbo].[SP_IPS]') and xtype in (N'FN', N'IF', N'TF', N'P'))
+drop procedure [dbo].[SP_IPS] 
+GO 
+SET ANSI_NULLS ON 
+GO 
+SET QUOTED_IDENTIFIER ON 
+GO 
+
+CREATE PROCEDURE dbo.SP_IPS ( 
+  @OPCION_PROCESO int = NULL, 
+  @ID INT = NULL , 
+  @NOMBRE NVARCHAR(50) = NULL , 
+  @NIT NVARCHAR(50) = NULL , 
+  @FECHA_REGISTRO DATETIME = NULL , 
+  @DIRECCION NVARCHAR(50) = NULL , 
+  @TELEFONO NVARCHAR(50) = NULL , 
+  @EMAIL NVARCHAR(50) = NULL 
+) 
+
+AS 
+BEGIN 
+IF @OPCION_PROCESO = 1
+BEGIN
+select 
+ID , 
+NOMBRE , 
+NIT , 
+FECHA_REGISTRO , 
+DIRECCION , 
+TELEFONO , 
+EMAIL 
+from Gen.IPS
+WHERE (@ID = 0 OR (@ID <> 0 AND ID = @ID)) 
+END
+
+IF @OPCION_PROCESO = 2
+BEGIN
+INSERT INTO Gen.IPS ( 
+  NOMBRE , 
+  NIT , 
+  FECHA_REGISTRO , 
+  DIRECCION , 
+  TELEFONO , 
+  EMAIL 
+) VALUES ( 
+  @NOMBRE , 
+  @NIT , 
+  @FECHA_REGISTRO , 
+  @DIRECCION , 
+  @TELEFONO , 
+  @EMAIL 
+)
+--SELECT SCOPE_IDENTITY() 'ID' 
+declare @Key int = @@identity
+select * from Gen.IPS where ID = @Key
+END
+IF @OPCION_PROCESO = 3
+BEGIN
+UPDATE Gen.IPS SET 
+NOMBRE = @NOMBRE , 
+NIT = @NIT , 
+FECHA_REGISTRO = @FECHA_REGISTRO , 
+DIRECCION = @DIRECCION , 
+TELEFONO = @TELEFONO , 
+EMAIL = @EMAIL 
+WHERE
+ID = @ID 
+select * from Gen.IPS where ID = @ID
+END
+
+IF @OPCION_PROCESO = 4
+BEGIN
+DELETE FROM Gen.IPS
+WHERE 
+ID = @ID 
+END
+IF @OPCION_PROCESO = 5
+BEGIN
+select 'buenas'
+END
+
+
+
+
+END 
+GO 
+
+

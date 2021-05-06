@@ -1,0 +1,74 @@
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'[dbo].[SP_CATEGORIA]') and xtype in (N'FN', N'IF', N'TF', N'P'))
+drop procedure [dbo].[SP_CATEGORIA] 
+GO 
+SET ANSI_NULLS ON 
+GO 
+SET QUOTED_IDENTIFIER ON 
+GO 
+
+CREATE PROCEDURE dbo.SP_CATEGORIA ( 
+  @OPCION_PROCESO int = NULL, 
+  @ID INT = NULL , 
+  @DESCRIPCION NVARCHAR(200) = NULL , 
+  @ID_ESTADO INT = NULL , 
+  @NATURALEZA INT = NULL 
+) 
+
+AS 
+BEGIN 
+IF @OPCION_PROCESO = 1
+BEGIN
+select 
+ID , 
+DESCRIPCION , 
+ID_ESTADO , 
+NATURALEZA 
+from Nomina.CATEGORIA
+WHERE (@ID = 0 OR (@ID <> 0 AND ID = @ID)) 
+END
+
+IF @OPCION_PROCESO = 2
+BEGIN
+INSERT INTO Nomina.CATEGORIA ( 
+  DESCRIPCION , 
+  ID_ESTADO , 
+  NATURALEZA 
+) VALUES ( 
+  @DESCRIPCION , 
+  @ID_ESTADO , 
+  @NATURALEZA 
+)
+--SELECT SCOPE_IDENTITY() 'ID' 
+declare @Key int = @@identity
+select * from Nomina.CATEGORIA where ID = @Key
+END
+IF @OPCION_PROCESO = 3
+BEGIN
+UPDATE Nomina.CATEGORIA SET 
+DESCRIPCION = @DESCRIPCION , 
+ID_ESTADO = @ID_ESTADO , 
+NATURALEZA = @NATURALEZA 
+WHERE
+ID = @ID 
+select * from Nomina.CATEGORIA where ID = @ID
+END
+
+IF @OPCION_PROCESO = 4
+BEGIN
+DELETE FROM Nomina.CATEGORIA
+WHERE 
+ID = @ID 
+END
+IF @OPCION_PROCESO = 5
+BEGIN
+select 'buenas'
+END
+
+
+
+
+END 
+GO 
+
+

@@ -1,0 +1,69 @@
+
+IF EXISTS (select * from dbo.sysobjects where id = object_id(N'[dbo].[SP_USUARIO_ROL]') and xtype in (N'FN', N'IF', N'TF', N'P'))
+drop procedure [dbo].[SP_USUARIO_ROL] 
+GO 
+SET ANSI_NULLS ON 
+GO 
+SET QUOTED_IDENTIFIER ON 
+GO 
+
+CREATE PROCEDURE dbo.SP_USUARIO_ROL ( 
+  @OPCION_PROCESO int = NULL, 
+  @ID INT = NULL , 
+  @ID_USUARIO INT = NULL , 
+  @ID_ROL INT = NULL 
+) 
+
+AS 
+BEGIN 
+IF @OPCION_PROCESO = 1
+BEGIN
+select 
+ID , 
+ID_USUARIO , 
+ID_ROL 
+from Gen.USUARIO_ROL
+WHERE (@ID = 0 OR (@ID <> 0 AND ID = @ID)) 
+END
+
+IF @OPCION_PROCESO = 2
+BEGIN
+INSERT INTO Gen.USUARIO_ROL ( 
+  ID_USUARIO , 
+  ID_ROL 
+) VALUES ( 
+  @ID_USUARIO , 
+  @ID_ROL 
+)
+--SELECT SCOPE_IDENTITY() 'ID' 
+declare @Key int = @@identity
+select * from Gen.USUARIO_ROL where ID = @Key
+END
+IF @OPCION_PROCESO = 3
+BEGIN
+UPDATE Gen.USUARIO_ROL SET 
+ID_USUARIO = @ID_USUARIO , 
+ID_ROL = @ID_ROL 
+WHERE
+ID = @ID 
+select * from Gen.USUARIO_ROL where ID = @ID
+END
+
+IF @OPCION_PROCESO = 4
+BEGIN
+DELETE FROM Gen.USUARIO_ROL
+WHERE 
+ID = @ID 
+END
+IF @OPCION_PROCESO = 5
+BEGIN
+select 'buenas'
+END
+
+
+
+
+END 
+GO 
+
+
